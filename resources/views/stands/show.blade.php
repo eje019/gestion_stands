@@ -19,12 +19,14 @@
                 <div class="col-md-4 mb-4">
                     <div class="card h-100">
                         <div class="card-body">
-                            <h5 class="card-title">{{ $produit->nom }}</h5>
-                            <p class="card-text">{{ $produit->description }}</p>
-                            <p class="card-text"><strong>Prix :</strong> {{ number_format($produit->prix, 2, ',', ' ') }} €</p>
-                            @if($produit->image_url)
-                                <img src="{{ $produit->image_url }}" alt="Image produit" class="img-fluid" style="max-height:100px;">
-                            @endif
+                            <a href="{{ route('produits.show_public', $produit->id) }}" style="text-decoration: none; color: inherit;">
+                                <h5 class="card-title">{{ $produit->nom }}</h5>
+                                <p class="card-text">{{ $produit->description }}</p>
+                                <p class="card-text"><strong>Prix :</strong> {{ number_format($produit->prix, 2, ',', ' ') }} €</p>
+                                @if($produit->image_url)
+                                    <img src="{{ $produit->image_url }}" alt="Image produit" class="img-fluid" style="max-height:100px;">
+                                @endif
+                            </a>
                         </div>
                     </div>
                 </div>

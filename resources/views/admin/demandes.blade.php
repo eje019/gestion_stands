@@ -35,9 +35,10 @@
                                 <button type="submit" class="btn btn-success btn-sm">Approuver</button>
                             </form>
                             <form action="{{ route('admin.demandes.refuser', $user->id) }}" method="POST" style="display:inline-block; margin-left:5px;">
-                                @csrf
-                                <button type="submit" class="btn btn-danger btn-sm">Refuser</button>
-                            </form>
+    @csrf
+    <input type="text" name="motif_refus" placeholder="Motif du refus" class="form-control form-control-sm d-inline-block" style="width:120px; margin-right:5px;" required>
+    <button type="submit" class="btn btn-danger btn-sm">Refuser</button>
+</form>
                         </td>
                     </tr>
                 @endforeach

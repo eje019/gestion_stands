@@ -3,6 +3,12 @@
 @section('content')
 <div class="container">
     <h1>Liste des stands</h1>
+    <form action="{{ route('recherche') }}" method="GET" class="mb-4">
+        <div class="input-group">
+            <input type="text" name="q" class="form-control" placeholder="Rechercher un stand ou un produit..." value="{{ request('q') }}">
+            <button type="submit" class="btn btn-primary">Rechercher</button>
+        </div>
+    </form>
     @if($stands->isEmpty())
         <p>Aucun stand disponible pour le moment.</p>
     @else

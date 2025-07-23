@@ -12,6 +12,31 @@ Route::get('/stands/{id}', [\App\Http\Controllers\StandController::class, 'show'
 // Route publique pour la fiche d'un produit
 Route::get('/produits/{id}', [\App\Http\Controllers\ProduitController::class, 'show'])->name('produits.show_public');
 
+// Page attente validation entrepreneur
+Route::get('/attente-validation', function () {
+    return view('attente-validation');
+})->name('attente.validation');
+
+// Commandes (admin)
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/admin/commandes', [\App\Http\Controllers\AdminController::class, 'commandes'])->name('admin.commandes');
+});
+
+// Historique commandes utilisateur
+Route::middleware(['auth'])->group(function () {
+    Route::get('/profile/commandes', [\App\Http\Controllers\ProfileController::class, 'commandes'])->name('profile.commandes');
+});
+
+// Recherche stands/produits
+Route::get('/recherche', [\App\Http\Controllers\StandController::class, 'recherche'])->name('recherche');
+
+// Routes panier (public)
+Route::get('/panier', [\App\Http\Controllers\PanierController::class, 'index'])->name('panier.index');
+Route::post('/panier/ajouter/{id}', [\App\Http\Controllers\PanierController::class, 'ajouter'])->name('panier.ajouter');
+Route::post('/panier/modifier/{id}', [\App\Http\Controllers\PanierController::class, 'modifier'])->name('panier.modifier');
+Route::post('/panier/supprimer/{id}', [\App\Http\Controllers\PanierController::class, 'supprimer'])->name('panier.supprimer');
+Route::post('/panier/valider', [\App\Http\Controllers\PanierController::class, 'valider'])->name('panier.valider');
+
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');

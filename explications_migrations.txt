@@ -166,6 +166,40 @@ La suite : ajout des routes et de la vue Blade pour lister et gérer les deman
 
 ## Ajout des routes d'administration
 
+---
+
+## Recherche publique stands/produits
+
+Pour permettre aux visiteurs de rechercher facilement un stand ou un produit, une fonctionnalité de recherche a été ajoutée côté public :
+
+1. **Formulaire de recherche**
+    - Ajouté en haut de la page d’accueil (`resources/views/stands/index.blade.php`).
+    - Permet de saisir un mot-clé pour rechercher à la fois dans les stands et les produits.
+
+2. **Route dédiée**
+    - Route GET `/recherche` ajoutée dans `routes/web.php` :
+      ```php
+      Route::get('/recherche', [\App\Http\Controllers\StandController::class, 'recherche'])->name('recherche');
+      ```
+
+3. **Contrôleur**
+    - Nouvelle méthode `recherche(Request $request)` dans `StandController` :
+        - Recherche dans `nom_stand` et `description` de la table `stands`.
+        - Recherche dans `nom` et `description` de la table `produits`.
+        - Les résultats sont transmis à la vue sous forme de deux collections : `$stands` et `$produits`.
+
+4. **Vue des résultats**
+    - Fichier `resources/views/recherche.blade.php` créé.
+    - Affiche les résultats trouvés dans les stands et/ou produits, avec liens vers leurs fiches détaillées.
+    - Message si aucun résultat trouvé.
+
+**Exemple d’utilisation** :
+- Un visiteur tape "pizza" dans le champ de recherche : il verra tous les stands et produits contenant "pizza" dans leur nom ou description.
+
+Cette fonctionnalité améliore l’expérience utilisateur en facilitant la découverte des offres sur la plateforme.
+
+---
+
 - Les routes pour la gestion des demandes d'entrepreneurs sont regroupées dans un préfixe `/admin` et protégées par deux middlewares :
     - `auth` : l'utilisateur doit être connecté
     - `admin` : l'utilisateur doit avoir le rôle `admin` (middleware à créer)
@@ -204,9 +238,62 @@ Il faut ensuite enregistrer ce middleware dans `app/Http/Kernel.php` dans la pro
 - La vue `resources/views/admin/demandes.blade.php` permet à l'administrateur de voir la liste des entrepreneurs en attente de validation.
 - Pour chaque demande, il est possible d'approuver ou de refuser via deux boutons (formulaires POST protégés par @csrf).
 - Les messages de succès ou d'erreur sont affichés en haut de la page.
+
+### Gestion du motif de refus (bonus)
+
+- Lors du rejet d'une demande, un champ texte "Motif du refus" est désormais obligatoire dans le formulaire de refus.
+- Ce motif est enregistré dans le champ `motif_refus` de l'utilisateur.
+- Le rôle de l'utilisateur passe à `entrepreneur_refuse` (l'utilisateur n'est plus supprimé).
+- Le motif pourra être affiché ou utilisé pour notifier l'utilisateur refusé.
+- Exemple d'utilisation dans la vue :
+```blade
+<form action="{{ route('admin.demandes.refuser', $user->id) }}" method="POST">
+    @csrf
+    <input type="text" name="motif_refus" placeholder="Motif du refus" required>
+    <button type="submit">Refuser</button>
+</form>
+```
+- Dans le contrôleur :
+```php
+public function refuser($id, Request $request)
+{
+    $user = User::findOrFail($id);
+    $motif = $request->input('motif_refus');
+    $user->motif_refus = $motif;
+    $user->role = 'entrepreneur_refuse';
+    $user->save();
+    return redirect()->route('admin.demandes')->with('error', 'Demande refusée avec motif.');
+}
+```
+
 - Si aucune demande n'est en attente, un message l'indique.
 
 La vue hérite du layout principal `layouts.app` pour garder la cohérence graphique du site.
+
+---
+
+## Configuration de l'envoi d'emails (notifications)
+
+Pour permettre l'envoi d'emails automatiques (par exemple lors du refus d'une demande entrepreneur), il faut configurer les paramètres SMTP dans le fichier `.env` à la racine du projet Laravel.
+
+**Exemple de configuration pour un compte Gmail :**
+```env
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USERNAME=faaz.gmof.ripm.knes@gmail.com
+MAIL_PASSWORD=faaz gmof ripm knes
+MAIL_ENCRYPTION=tls
+MAIL_FROM_ADDRESS=faaz.gmof.ripm.knes@gmail.com
+MAIL_FROM_NAME="Eat&Drink"
+```
+- Remplace les valeurs par celles de ton compte d'envoi si besoin.
+- Pour Gmail, il peut être nécessaire d'utiliser un mot de passe d'application ou d'activer les accès moins sécurisés.
+- Après modification, redémarre le serveur Laravel pour prendre en compte les changements.
+
+**Utilisation :**
+- L'email de refus est envoyé automatiquement via le Mailable `RefusDemandeMail` lors du rejet d'une demande entrepreneur.
+- Le contenu du mail est personnalisable dans `resources/views/emails/refus_demande.blade.php`.
 
 ---
 
@@ -259,3 +346,40 @@ La suite : création du middleware et des vues Blade pour la gestion des produit
 - Les messages de succès sont affichés en haut de page après chaque opération
 
 Chaque vue hérite du layout principal `layouts.app` pour une cohérence graphique.
+
+---
+
+## Panier et commandes (logique back, sans style)
+
+- Mise en place d'un contrôleur `PanierController` pour gérer le panier en session :
+    - `index()` : affiche le panier (liste des produits, quantités, total)
+    - `ajouter($id)` : ajoute un produit au panier (POST, quantité personnalisable)
+    - `modifier($id)` : modifie la quantité d'un produit (POST)
+    - `supprimer($id)` : retire un produit du panier (POST)
+    - `valider()` : simule la validation du panier (POST, commande à implémenter)
+- Utilisation de la session Laravel pour stocker le panier sous forme de tableau `[produit_id => quantité]`.
+- Création des routes publiques `/panier`, `/panier/ajouter/{id}`, `/panier/modifier/{id}`, `/panier/supprimer/{id}`, `/panier/valider`.
+- Vue minimaliste `panier/index.blade.php` pour afficher, modifier et valider le panier (sans style, juste HTML fonctionnel).
+
+La création effective des commandes (sauvegarde en base, gestion utilisateur/stand) a été réalisée comme suit :
+
+---
+
+## Commandes et vitrine publique (Module 4)
+
+- **Vitrine publique** : accessible à tous, liste tous les stands approuvés sur la page d’accueil (« Nos Exposants »).
+- **Page stand** : chaque stand possède une page dédiée affichant ses informations et la liste de ses produits.
+- **Fiche produit** : chaque produit est consultable individuellement.
+- **Panier** : les visiteurs peuvent ajouter des produits de plusieurs stands à leur panier (stocké en session).
+- **Validation de commande** :
+    - Lors de la validation, une commande distincte est créée pour chaque stand concerné.
+    - Les détails de commande sont enregistrés au format JSON dans la base.
+    - Si l’utilisateur est connecté, la commande est liée à son compte (`user_id`).
+    - Les commandes sont datées et consultables par l’utilisateur (historique) et par l’admin (par stand).
+- **Aucune logique de paiement n’est incluse** (conforme au cahier des charges TP).
+
+---
+
+# FIN DE LA DOCUMENTATION BACKEND
+
+Le backend est complet, modulaire, et prêt pour le branchement d’un front stylisé ou d’API supplémentaires.

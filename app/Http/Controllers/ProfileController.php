@@ -57,4 +57,17 @@ class ProfileController extends Controller
 
         return Redirect::to('/');
     }
+
+    /**
+     * Affiche l'historique des commandes de l'utilisateur connecté
+     */
+    public function commandes(Request $request): View
+    {
+        $user = $request->user();
+        $commandes = \App\Models\Commande::where('user_id', $user->id)
+            ->with('stand')
+            ->orderByDesc('date_commande')
+            ->get();
+        return view('profile.commandes', compact('commandes'));
+    }
 }

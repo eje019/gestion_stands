@@ -21,4 +21,10 @@ class Commande extends Model
     {
         return $this->belongsTo(Stand::class);
     }
+
+    // Une commande appartient à un utilisateur
+    public function user()
+    {
+        return $this->belongsTo(\App\Models\User::class);
+    }
 }

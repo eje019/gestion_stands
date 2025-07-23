@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Mail;
+use App\Mail\RefusDemandeMail;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -27,7 +29,21 @@ class AdminController extends Controller
     public function refuser($id, Request $request)
     {
         $user = User::findOrFail($id);
-        $user->delete(); // Ou autre logique de refus
-        return redirect()->route('admin.demandes')->with('error', 'Demande refusée.');
+        $motif = $request->input('motif_refus');
+        $user->motif_refus = $motif;
+        $user->role = 'entrepreneur_refuse';
+        $user->save();
+        
+        Mail::to($user->email)->send(new RefusDemandeMail($user));
+
+        
+        return redirect()->route('admin.demandes')->with('error', 'Demande refusée avec motif et notification envoyée.');
+    }
+
+    // Affiche les commandes par stand
+    public function commandes()
+    {
+        $stands = \App\Models\Stand::with(['commandes'])->get();
+        return view('admin.commandes', compact('stands'));
     }
 }

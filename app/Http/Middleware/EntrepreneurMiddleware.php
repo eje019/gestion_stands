@@ -17,6 +17,9 @@ class EntrepreneurMiddleware
         if ($user && $user->role === 'entrepreneur_approuve') {
             return $next($request);
         }
+        if ($user && $user->role === 'entrepreneur_en_attente') {
+            return redirect()->route('attente.validation');
+        }
         abort(403, 'Accès réservé aux entrepreneurs approuvés');
     }
 }

@@ -20,4 +20,23 @@ class StandController extends Controller
         $stand = \App\Models\Stand::with('produits', 'user')->findOrFail($id);
         return view('stands.show', compact('stand'));
     }
+
+    // Recherche stands et produits
+    public function recherche(Request $request)
+    {
+        $q = $request->input('q');
+        $stands = collect();
+        $produits = collect();
+        if ($q) {
+            $stands = \App\Models\Stand::with('user')
+                ->where('nom_stand', 'like', "%$q%")
+                ->orWhere('description', 'like', "%$q%")
+                ->get();
+            $produits = \App\Models\Produit::with('stand.user')
+                ->where('nom', 'like', "%$q%")
+                ->orWhere('description', 'like', "%$q%")
+                ->get();
+        }
+        return view('recherche', compact('stands', 'produits'));
+    }
 }
