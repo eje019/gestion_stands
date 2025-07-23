@@ -1,35 +1,27 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
-    <a href="{{ route('stands.index') }}" class="btn btn-secondary mb-3">&larr; Retour à la liste des stands</a>
-    <div class="card mb-4">
-        <div class="card-body">
-            <h2 class="card-title">{{ $stand->nom_stand }}</h2>
-            <p class="card-text">{{ $stand->description }}</p>
-            <p class="card-text"><strong>Entreprise :</strong> {{ $stand->user->nom_entreprise ?? 'N/A' }}</p>
-        </div>
+<div class="max-w-4xl mx-auto py-8 px-4">
+    <a href="{{ route('stands.index') }}" class="inline-block mb-6 px-4 py-2 bg-violet-100 dark:bg-violet-900 text-violet-700 dark:text-violet-300 font-semibold rounded-lg hover:bg-violet-200 dark:hover:bg-violet-800 transition">&larr; Retour à la liste des stands</a>
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-8 border border-violet-100 dark:border-violet-900">
+        <h2 class="text-2xl font-bold text-violet-800 dark:text-violet-300 mb-2">{{ $stand->nom_stand }}</h2>
+        <p class="text-gray-600 dark:text-gray-300 mb-2">{{ $stand->description }}</p>
+        <p class="text-sm text-violet-500 dark:text-violet-400 mb-2"><strong>Entreprise :</strong> {{ $stand->user->nom_entreprise ?? 'N/A' }}</p>
     </div>
-    <h3>Produits proposés</h3>
+    <h3 class="text-xl font-semibold text-violet-700 dark:text-violet-200 mb-4">Produits proposés</h3>
     @if($stand->produits->isEmpty())
-        <p>Aucun produit pour ce stand.</p>
+        <p class="text-gray-500 dark:text-gray-400">Aucun produit pour ce stand.</p>
     @else
-        <div class="row">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
             @foreach($stand->produits as $produit)
-                <div class="col-md-4 mb-4">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <a href="{{ route('produits.show_public', $produit->id) }}" style="text-decoration: none; color: inherit;">
-                                <h5 class="card-title">{{ $produit->nom }}</h5>
-                                <p class="card-text">{{ $produit->description }}</p>
-                                <p class="card-text"><strong>Prix :</strong> {{ number_format($produit->prix, 2, ',', ' ') }} €</p>
-                                @if($produit->image_url)
-                                    <img src="{{ $produit->image_url }}" alt="Image produit" class="img-fluid" style="max-height:100px;">
-                                @endif
-                            </a>
-                        </div>
-                    </div>
-                </div>
+                <a href="{{ route('produits.show_public', $produit->id) }}" class="bg-white dark:bg-gray-900 rounded-xl shadow p-4 flex flex-col hover:shadow-violet-300 border border-violet-50 dark:border-violet-900 transition text-inherit no-underline">
+                    @if($produit->image_url)
+                        <img src="{{ $produit->image_url }}" alt="Image produit" class="object-cover mx-auto mb-4 rounded max-h-32">
+                    @endif
+                    <h4 class="text-lg font-bold text-violet-800 dark:text-violet-300 mb-1">{{ $produit->nom }}</h4>
+                    <p class="text-gray-600 dark:text-gray-300 mb-2">{{ $produit->description }}</p>
+                    <p class="text-violet-600 dark:text-violet-400 font-semibold">{{ number_format($produit->prix, 2, ',', ' ') }} €</p>
+                </a>
             @endforeach
         </div>
     @endif
