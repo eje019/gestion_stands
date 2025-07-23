@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Produit;
 use App\Models\Commande;
+use Illuminate\Support\Facades\Auth;
 
 class PanierController extends Controller
 {
@@ -70,9 +71,9 @@ class PanierController extends Controller
 
         // Création d'une commande par stand
         foreach ($parStand as $stand_id => $details) {
-            \App\Models\Commande::create([
+            Commande::create([
                 'stand_id' => $stand_id,
-                'user_id' => auth()->id(),
+                'user_id' => Auth::id(),
                 'details_commande' => json_encode($details, JSON_UNESCAPED_UNICODE),
                 'date_commande' => now(),
             ]);
