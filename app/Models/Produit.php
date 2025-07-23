@@ -15,6 +15,7 @@ class Produit extends Model
         'description',
         'prix',
         'image_url',
+        'image_path',
         'stand_id',
     ];
 

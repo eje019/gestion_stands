@@ -1,61 +1,94 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Eat&Drink – Plateforme de gestion de stands culinaires
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Présentation
+Eat&Drink est une application web de gestion d’événement culinaire permettant à des entrepreneurs de proposer leurs stands, aux visiteurs de commander des produits, et à l’administration de gérer l’ensemble du processus.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Fonctionnalités principales
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### 1. Gestion des rôles
+- **Administrateur** : gère les demandes d’inscription des entrepreneurs, valide ou refuse les stands, visualise les commandes.
+- **Entrepreneur** : propose un stand, ajoute/modifie/supprime ses produits, gère ses commandes.
+- **Participant (visiteur)** : consulte les stands, ajoute des produits au panier, passe commande, consulte son historique.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### 2. Authentification & Inscription
+- Inscription avec nom, email, mot de passe, nom d’entreprise (entrepreneur).
+- Authentification sécurisée (Laravel Breeze).
+- Attribution automatique du rôle `entrepreneur_en_attente` à l’inscription.
 
-## Learning Laravel
+### 3. Gestion des stands
+- Création et gestion de stands par les entrepreneurs (après validation admin).
+- Listing public des stands avec fiche détaillée.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### 4. Gestion des produits
+- CRUD complet pour les produits d’un entrepreneur.
+- Upload d’image réelle pour chaque produit (stockée dans `/storage/produits`).
+- Affichage des produits par stand et fiche produit publique.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+### 5. Panier & Commande
+- Panier accessible partout, gestion des quantités, suppression d’articles.
+- Validation du panier = création de commandes (une par stand concerné).
+- Historique des commandes pour chaque utilisateur.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 6. Tableau de bord admin
+- Liste des demandes d’entrepreneurs en attente.
+- Validation/refus avec motif, notification par email.
+- Visualisation des commandes par stand.
 
-## Laravel Sponsors
+### 7. Notifications
+- Email automatique à l’entrepreneur lors du refus de sa demande (avec motif).
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### 8. Interface utilisateur
+- Thème violet/dark, responsive, boutons arrondis, navigation rapide.
+- Messages d’alerte harmonisés.
+- Navigation adaptée selon le rôle.
 
-### Premium Partners
+---
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+## Identifiants administrateur par défaut
 
-## Contributing
+Pour accéder à l’interface d’administration, connectez-vous avec :
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+- **Email** : `admin@eatdrink.com`
+- **Mot de passe** : `admin1234`
 
-## Code of Conduct
+Ces identifiants sont créés automatiquement par le seeder `AdminUserSeeder.php`.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+---
 
-## Security Vulnerabilities
+## Installation rapide
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+1. **Cloner le dépôt**
+2. `composer install`
+3. Configurer `.env` (DB_CONNECTION=sqlite recommandé pour local)
+4. `php artisan key:generate`
+5. `php artisan migrate --seed`
+6. `php artisan storage:link` (pour les images uploadées)
+7. `php artisan serve`
 
-## License
+---
+
+## Parcours utilisateur
+
+- **Entrepreneur** : S’inscrit → attend validation → accède à « Mes Produits » → ajoute/modifie/supprime ses produits (avec image) → visualise ses commandes.
+- **Visiteur** : Parcourt les stands et produits → ajoute au panier → passe commande → consulte son historique.
+- **Admin** : Se connecte → gère les demandes d’entrepreneurs → visualise les commandes → gère les refus/validations.
+
+---
+
+## Technologies principales
+- Laravel 10+
+- Breeze (authentification)
+- TailwindCSS (front-end)
+- SQLite (par défaut, facile à configurer)
+
+---
+
+## Remarques
+- Toutes les erreurs et validations sont affichées en français.
+- L’upload d’images nécessite le dossier `storage` lié au `public` (`php artisan storage:link`).
+- Les images sont stockées dans `storage/app/public/produits` et accessibles via `/storage/produits/...`.
+- Pour toute question, se référer au code source ou contacter l’équipe projet.
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).

@@ -5,16 +5,19 @@
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}">
-                        <x-application-logo class="block h-9 w-auto fill-current text-gray-800 dark:text-gray-200" />
-                    </a>
+                    <a href="/" class="text-2xl font-extrabold tracking-tight text-violet-700 dark:text-violet-300 hover:text-violet-900 dark:hover:text-violet-100 transition">
+    Eat&Drink
+</a>
                 </div>
 
                 <!-- Navigation Links -->
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex items-center">
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+                    <a href="{{ route('panier.index') }}" class="ml-4 px-3 py-2 rounded-lg bg-violet-100 dark:bg-violet-900 text-violet-700 dark:text-violet-200 font-bold flex items-center gap-2 hover:bg-violet-200 dark:hover:bg-violet-800 transition">
+                        <span class="text-lg">🛒</span> <span class="hidden sm:inline">Panier</span>
+                    </a>
                 </div>
             </div>
 

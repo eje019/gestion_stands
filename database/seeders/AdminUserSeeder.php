@@ -16,7 +16,7 @@ class AdminUserSeeder extends Seeder
                 'nom_entreprise' => 'Eat&Drink Admin',
                 'name' => 'Administrateur',
                 'email' => 'admin@eatdrink.com',
-                'password' => Hash::make('admin1234'), // À changer en prod !
+                'password' => Hash::make('admin1234'),
                 'role' => 'admin',
             ]
         );

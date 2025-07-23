@@ -29,8 +29,26 @@
 
             <!-- Page Content -->
             <main>
-    @yield('content')
-</main>
+                @if(session('success'))
+                    <x-alert type="success">{{ session('success') }}</x-alert>
+                @endif
+                @if(session('error'))
+                    <x-alert type="error">{{ session('error') }}</x-alert>
+                @endif
+                @if(session('info'))
+                    <x-alert type="info">{{ session('info') }}</x-alert>
+                @endif
+                @if($errors->any())
+                    <x-alert type="error">
+                        <ul class="list-disc list-inside text-left">
+                            @foreach($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </x-alert>
+                @endif
+                @yield('content')
+            </main>
         </div>
     </body>
 </html>

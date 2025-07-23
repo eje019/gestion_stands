@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Produit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class ProduitController extends Controller
 {
@@ -30,9 +31,14 @@ class ProduitController extends Controller
             'nom' => 'required|string|max:255',
             'description' => 'nullable|string',
             'prix' => 'required|numeric|min:0',
-            'image_url' => 'nullable|url',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:4096',
         ]);
-        $produit = new Produit($request->all());
+        $data = $request->only(['nom', 'description', 'prix']);
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('produits', 'public');
+            $data['image_path'] = $path;
+        }
+        $produit = new Produit($data);
         $produit->stand_id = $user->stand->id;
         $produit->save();
         return redirect()->route('produits.index')->with('success', 'Produit ajouté avec succès.');
@@ -55,9 +61,18 @@ class ProduitController extends Controller
             'nom' => 'required|string|max:255',
             'description' => 'nullable|string',
             'prix' => 'required|numeric|min:0',
-            'image_url' => 'nullable|url',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:4096',
         ]);
-        $produit->update($request->all());
+        $data = $request->only(['nom', 'description', 'prix']);
+        if ($request->hasFile('image')) {
+            // Supprimer l'ancienne image si elle existe
+            if ($produit->image_path && Storage::disk('public')->exists($produit->image_path)) {
+                Storage::disk('public')->delete($produit->image_path);
+            }
+            $path = $request->file('image')->store('produits', 'public');
+            $data['image_path'] = $path;
+        }
+        $produit->update($data);
         return redirect()->route('produits.index')->with('success', 'Produit modifié avec succès.');
     }
 
