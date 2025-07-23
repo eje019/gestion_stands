@@ -44,4 +44,7 @@
             </x-primary-button>
         </div>
     </form>
+    <div class="flex justify-start mb-4">
+        <a href="{{ route('register') }}" class="text-sm px-3 py-1 bg-gray-200 dark:bg-gray-700 text-violet-700 dark:text-violet-300 font-semibold rounded shadow hover:bg-gray-300 dark:hover:bg-gray-600 transition">Créer un compte</a>
+    </div>
 </x-guest-layout>

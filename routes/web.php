@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Models\User;
+
 
 // Route publique pour la liste des stands
 Route::get('/', [\App\Http\Controllers\StandController::class, 'index'])->name('stands.index');
@@ -38,7 +40,8 @@ Route::post('/panier/supprimer/{id}', [\App\Http\Controllers\PanierController::c
 Route::post('/panier/valider', [\App\Http\Controllers\PanierController::class, 'valider'])->name('panier.valider');
 
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    $demandes = User::where('role', 'entrepreneur_en_attente')->get();
+    return view('dashboard', compact('demandes'));
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {

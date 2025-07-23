@@ -22,7 +22,8 @@ class AdminController extends Controller
         $user = User::findOrFail($id);
         $user->role = 'entrepreneur_approuve';
         $user->save();
-        return redirect()->route('admin.demandes')->with('success', 'Demande approuvée avec succès.');
+        Mail::to($user->email)->send(new \App\Mail\ValidationDemandeMail($user));
+        return redirect()->route('admin.demandes')->with('success', 'Demande approuvée avec succès. Un email de validation a été envoyé.');
     }
 
     // (Bonus) Refuse une demande

@@ -48,6 +48,9 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
+        if ($user->role === 'entrepreneur_en_attente') {
+            return redirect()->route('attente.validation')->with('success', "Votre compte a bien été créé et est en attente d'approbation par l'administration.");
+        }
         return redirect(route('dashboard', absolute: false));
     }
 }

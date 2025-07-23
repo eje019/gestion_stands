@@ -21,6 +21,12 @@
                 </div>
             </div>
 
+            <!-- Bouton Se connecter si invité -->
+            @guest
+                <div class="hidden sm:flex sm:items-center sm:ms-6">
+                    <a href="{{ route('login') }}" class="px-4 py-2 bg-violet-700 hover:bg-violet-500 text-black font-bold rounded-lg shadow transition">Se connecter</a>
+                </div>
+            @endguest
             <!-- Settings Dropdown -->
             <div class="hidden sm:flex sm:items-center sm:ms-6">
                 <x-dropdown align="right" width="48">
